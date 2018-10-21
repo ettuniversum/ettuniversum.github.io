@@ -67,12 +67,12 @@ function drawWaves() {
 }
 
 function onButtonClick() {
-  let serviceUuid = document.querySelector('#service').value;
+  let serviceUuid = document.querySelector('0000dfb0-0000-1000-8000-00805f9b34fb').value;
   if (serviceUuid.startsWith('0x')) {
     serviceUuid = parseInt(serviceUuid);
   }
 
-  let characteristicUuid = document.querySelector('#characteristic').value;
+  let characteristicUuid = document.querySelector('0000dfb1-0000-1000-8000-00805f9b34fb').value;
   if (characteristicUuid.startsWith('0x')) {
     characteristicUuid = parseInt(characteristicUuid);
   }
