@@ -76,7 +76,7 @@ function onButtonClick() {
     console.log('Connecting to GATT Server...');
     return device.gatt.connect();
   }).then(server => {
-    log('Getting Service...');
+    console.log('Getting Service...');
     return server.getPrimaryService('0000dfb0-0000-1000-8000-00805f9b34fb');
   })
   .then(service => {
