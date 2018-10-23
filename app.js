@@ -67,75 +67,118 @@ function drawWaves() {
 }
 
 function onButtonClick() {
-  let serviceUuid = document.querySelector('#service').value;
-  if (serviceUuid.startsWith('0x')) {
-    serviceUuid = parseInt(serviceUuid);
-  }
-
-  let characteristicUuid = document.querySelector('#characteristic').value;
-  if (characteristicUuid.startsWith('0x')) {
-    characteristicUuid = parseInt(characteristicUuid);
-  }
-
-  log('Requesting any Bluetooth Device...');
+  console.log('Requesting any Bluetooth Device...');
   navigator.bluetooth.requestDevice({
-  // filters: [...] <- Prefer filters to save energy & show relevant devices.
+   // filters: [...] <- Prefer filters to save energy & show relevant devices.
       acceptAllDevices: true,
-      optionalServices: [serviceUuid]})
+      optionalServices: ['device_information']})
   .then(device => {
-    log('Connecting to GATT Server...');
+    console.log('Connecting to GATT Server...');
     return device.gatt.connect();
   })
   .then(server => {
-    log('Getting Service...');
-    return server.getPrimaryService(serviceUuid);
+    console.log('Getting Device Information Service...');
+    return server.getPrimaryService('device_information');
   })
   .then(service => {
-    log('Getting Characteristic...');
-    return service.getCharacteristic(characteristicUuid);
+    console.log('Getting Device Information Characteristics...');
+    return service.getCharacteristics();
   })
-  .then(characteristic => {
-    log('Getting Descriptors...');
-    return characteristic.getDescriptors();
-  })
-  .then(descriptors => {
+  .then(characteristics => {
     let queue = Promise.resolve();
-    descriptors.forEach(descriptor => {
-      switch (descriptor.uuid) {
+    let decoder = new TextDecoder('utf-8');
+    characteristics.forEach(characteristic => {
+      switch (characteristic.uuid) {
 
-        case BluetoothUUID.getDescriptor('gatt.client_characteristic_configuration'):
-          queue = queue.then(_ => descriptor.readValue()).then(value => {
-            log('> Client Characteristic Configuration:');
-            let notificationsBit = value.getUint8(0) & 0b01;
-            log('  > Notifications: ' + (notificationsBit ? 'ON' : 'OFF'));
-            let indicationsBit = value.getUint8(0) & 0b10;
-            log('  > Indications: ' + (indicationsBit ? 'ON' : 'OFF'));
+        case BluetoothUUID.getCharacteristic('manufacturer_name_string'):
+          queue = queue.then(_ => characteristic.readValue()).then(value => {
+            console.log('> Manufacturer Name String: ' + decoder.decode(value));
           });
           break;
 
-        case BluetoothUUID.getDescriptor('gatt.characteristic_user_description'):
-          queue = queue.then(_ => descriptor.readValue()).then(value => {
-            let decoder = new TextDecoder('utf-8');
-            log('> Characteristic User Description: ' + decoder.decode(value));
+        case BluetoothUUID.getCharacteristic('model_number_string'):
+          queue = queue.then(_ => characteristic.readValue()).then(value => {
+            console.log('> Model Number String: ' + decoder.decode(value));
           });
           break;
 
-        case BluetoothUUID.getDescriptor('report_reference'):
-          queue = queue.then(_ => descriptor.readValue()).then(value => {
-            log('> Report Reference:');
-            log('  > Report ID: ' + value.getUint8(0));
-            log('  > Report Type: ' + getReportType(value));
+        case BluetoothUUID.getCharacteristic('hardware_revision_string'):
+          queue = queue.then(_ => characteristic.readValue()).then(value => {
+            console.log('> Hardware Revision String: ' + decoder.decode(value));
           });
           break;
 
-        default: log('> Unknown Descriptor: ' + descriptor.uuid);
+        case BluetoothUUID.getCharacteristic('firmware_revision_string'):
+          queue = queue.then(_ => characteristic.readValue()).then(value => {
+            console.log('> Firmware Revision String: ' + decoder.decode(value));
+          });
+          break;
+
+        case BluetoothUUID.getCharacteristic('software_revision_string'):
+          queue = queue.then(_ => characteristic.readValue()).then(value => {
+            console.log('> Software Revision String: ' + decoder.decode(value));
+          });
+          break;
+
+        case BluetoothUUID.getCharacteristic('system_id'):
+          queue = queue.then(_ => characteristic.readValue()).then(value => {
+            console.log('> System ID: ');
+            console.log('  > Manufacturer Identifier: ' +
+                padHex(value.getUint8(4)) + padHex(value.getUint8(3)) +
+                padHex(value.getUint8(2)) + padHex(value.getUint8(1)) +
+                padHex(value.getUint8(0)));
+            console.log('  > Organizationally Unique Identifier: ' +
+                padHex(value.getUint8(7)) + padHex(value.getUint8(6)) +
+                padHex(value.getUint8(5)));
+          });
+          break;
+
+        case BluetoothUUID.getCharacteristic('ieee_11073-20601_regulatory_certification_data_list'):
+          queue = queue.then(_ => characteristic.readValue()).then(value => {
+            console.log('> IEEE 11073-20601 Regulatory Certification Data List: ' +
+                decoder.decode(value));
+          });
+          break;
+
+        case BluetoothUUID.getCharacteristic('pnp_id'):
+          queue = queue.then(_ => characteristic.readValue()).then(value => {
+            console.log('> PnP ID:');
+            console.log('  > Vendor ID Source: ' +
+                (value.getUint8(0) === 1 ? 'Bluetooth' : 'USB'));
+            if (value.getUint8(0) === 1) {
+              console.log('  > Vendor ID: ' +
+                  (value.getUint8(1) | value.getUint8(2) << 8));
+            } else {
+              console.log('  > Vendor ID: ' +
+                  getUsbVendorName(value.getUint8(1) | value.getUint8(2) << 8));
+            }
+            console.log('  > Product ID: ' +
+                (value.getUint8(3) | value.getUint8(4) << 8));
+            console.log('  > Product Version: ' +
+                (value.getUint8(5) | value.getUint8(6) << 8));
+          });
+          break;
+
+        default: console.log('> Unknown Characteristic: ' + characteristic.uuid);
       }
     });
     return queue;
   })
   .catch(error => {
-    log('Argh! ' + error);
+    console.log('Argh! ' + error);
   });
+}
+
+/* Utils */
+
+function padHex(value) {
+  return ('00' + value.toString(16).toUpperCase()).slice(-2);
+}
+
+function getUsbVendorName(value) {
+  // Check out page source to see what valueToUsbVendorName object is.
+  return value +
+      (value in valueToUsbVendorName ? ' (' + valueToUsbVendorName[value] + ')' : '');
 }
 
 /* Utils */
