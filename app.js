@@ -71,7 +71,7 @@ function onButtonClick() {
   navigator.bluetooth.requestDevice({
    // filters: [...] <- Prefer filters to save energy & show relevant devices.
       acceptAllDevices: true,
-      optionalServices: ['device_information']})
+      optionalServices: ['0000dfb0-0000-1000-8000-00805f9b34fb']})
   .then(device => {
     console.log('Connecting to GATT Server...');
     return device.gatt.connect();
