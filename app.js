@@ -71,17 +71,17 @@ function onButtonClick() {
   navigator.bluetooth.requestDevice({
    // filters: [...] <- Prefer filters to save energy & show relevant devices.
       acceptAllDevices: true,
-      optionalServices: ['0000dfb0-0000-1000-8000-00805f9b34fb']})
+      optionalServices: ['00001801-0000-1000-8000-00805f9b34fb']})
   .then(device => {
     console.log('Connecting to GATT Server...');
     return device.gatt.connect();
   }).then(server => {
     console.log('Getting Service...');
-    return server.getPrimaryService('0000dfb0-0000-1000-8000-00805f9b34fb');
+    return server.getPrimaryService('00001801-0000-1000-8000-00805f9b34fb');
   })
   .then(service => {
     console.log('Getting Characteristic...');
-    return service.getCharacteristic('0000dfb1-0000-1000-8000-00805f9b34fb');
+    return service.getCharacteristic('00002a05-0000-1000-8000-00805f9b34fb');
   })log('Requesting Bluetooth Device...');
   navigator.bluetooth.requestDevice({filters: [{services: [serviceUuid]}]})
   .then(device => {
