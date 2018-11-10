@@ -82,50 +82,32 @@ function onButtonClick() {
   .then(service => {
     console.log('Getting Characteristic...');
     return service.getCharacteristic('0000dfb1-0000-1000-8000-00805f9b34fb');
+  })log('Requesting Bluetooth Device...');
+  navigator.bluetooth.requestDevice({filters: [{services: [serviceUuid]}]})
+  .then(device => {
+    log('Connecting to GATT Server...');
+    return device.gatt.connect();
+  })
+  .then(server => {
+    log('Getting Service...');
+    return server.getPrimaryService(serviceUuid);
+  })
+  .then(service => {
+    log('Getting Characteristic...');
+    return service.getCharacteristic(characteristicUuid);
   })
   .then(characteristic => {
-    console.log('Getting Descriptors...');
-    return characteristic.getDescriptors();
-  })
-  .then(descriptors => {
-    let queue = Promise.resolve();
-    descriptors.forEach(descriptor => {
-      switch (descriptor.uuid) {
-
-        case BluetoothUUID.getDescriptor('gatt.client_characteristic_configuration'):
-          queue = queue.then(_ => descriptor.readValue()).then(value => {
-            console.log('> Client Characteristic Configuration:');
-            let notificationsBit = value.getUint8(0) & 0b01;
-            console.log('  > Notifications: ' + (notificationsBit ? 'ON' : 'OFF'));
-            let indicationsBit = value.getUint8(0) & 0b10;
-            console.log('  > Indications: ' + (indicationsBit ? 'ON' : 'OFF'));
-          });
-          break;
-
-        case BluetoothUUID.getDescriptor('gatt.characteristic_user_description'):
-          descriptor.startNotifications().then(_ => {
-                console.log('> Notifications started');
-                myCharacteristic.addEventListener('characteristicvaluechanged',
-                    handleNotifications);          
-          });
-          break;
-
-        case BluetoothUUID.getDescriptor('report_reference'):
-          queue = queue.then(_ => descriptor.readValue()).then(value => {
-            console.log('> Report Reference:');
-            console.log('  > Report ID: ' + value.getUint8(0));
-            console.log('  > Report Type: ' + getReportType(value));
-          });
-          break;
-
-        default: console.log('> Unknown Descriptor: ' + descriptor.uuid);
-      }
+    myCharacteristic = characteristic;
+    return myCharacteristic.startNotifications().then(_ => {
+      log('> Notifications started');
+      myCharacteristic.addEventListener('characteristicvaluechanged',
+          handleNotifications);
     });
-    return queue;
   })
   .catch(error => {
-    console.log('Argh! ' + error);
+    log('Argh! ' + error);
   });
+  
 }
 /* Utils */
 
