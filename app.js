@@ -67,34 +67,22 @@ function drawWaves() {
 }
 
 function onButtonClick() {
-  console.log('Requesting any Bluetooth Device...');
-  navigator.bluetooth.requestDevice({
-   // filters: [...] <- Prefer filters to save energy & show relevant devices.
-      acceptAllDevices: true,
-      optionalServices: ['00001801-0000-1000-8000-00805f9b34fb']})
-  .then(device => {
-    console.log('Connecting to GATT Server...');
-    return device.gatt.connect();
-  }).then(server => {
-    console.log('Getting Service...');
-    return server.getPrimaryService('00001801-0000-1000-8000-00805f9b34fb');
-  })
-  .then(service => {
-    console.log('Getting Characteristic...');
-    return service.getCharacteristic('00002a05-0000-1000-8000-00805f9b34fb');
-  })
+  navigator.bluetooth.requestDevice({ filters: [{ services: ['00001801-0000-1000-8000-00805f9b34fb'] }] })
+  .then(device => device.gatt.connect())
+  .then(server => server.getPrimaryService('00001801-0000-1000-8000-00805f9b34fb'))
+  .then(service => service.getCharacteristic('00002a05-0000-1000-8000-00805f9b34fb'))
+  .then(characteristic => characteristic.startNotifications())
   .then(characteristic => {
-    myCharacteristic = characteristic;
-    return myCharacteristic.startNotifications().then(_ => {
-      console.log('> Notifications started');
-      myCharacteristic.addEventListener('characteristicvaluechanged',
-          handleNotifications);
-    });
+    characteristic.addEventListener('characteristicvaluechanged',
+                                    handleCharacteristicValueChanged);
+    console.log(' > Notifications have been started.');
+  .then(characteristic => characteristic.getDescriptor('00002902-0000-1000-8000-00805f9b34fb'))
+  .then(descriptor => descriptor.readValue())
+  .then(value => {
+  let decoder = new TextDecoder('utf-8');
+  console.log('Value : ' + decoder.decode(value));
   })
-  .catch(error => {
-    console.log('Argh! ' + error);
-  });
-  
+  .catch(error => { console.log(error); });  
 }
 /* Utils */
 
@@ -108,9 +96,10 @@ function getUsbVendorName(value) {
       (value in valueToUsbVendorName ? ' (' + valueToUsbVendorName[value] + ')' : '');
 }
 
-function handleNotifications(event) {
+function handleCharacteristicValueChanged(event) {
   let value = event.target.value;
   let a = [];
+  console.log('Received value: ' + value);
   // Convert raw data bytes to hex values just for the sake of showing something.
   // In the "real" world, you'd use data.getUint8, data.getUint16 or even
   // TextDecoder to process raw data bytes.
