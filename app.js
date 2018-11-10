@@ -88,14 +88,6 @@ function onButtonClick() {
     log('Connecting to GATT Server...');
     return device.gatt.connect();
   })
-  .then(server => {
-    log('Getting Service...');
-    return server.getPrimaryService(serviceUuid);
-  })
-  .then(service => {
-    log('Getting Characteristic...');
-    return service.getCharacteristic(characteristicUuid);
-  })
   .then(characteristic => {
     myCharacteristic = characteristic;
     return myCharacteristic.startNotifications().then(_ => {
