@@ -86,7 +86,7 @@ function onButtonClick() {
   .then(characteristic => {
     myCharacteristic = characteristic;
     return myCharacteristic.startNotifications().then(_ => {
-      log('> Notifications started');
+      console.log('> Notifications started');
       myCharacteristic.addEventListener('characteristicvaluechanged',
           handleNotifications);
     });
