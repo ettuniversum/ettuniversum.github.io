@@ -33,7 +33,6 @@
       .catch(error => {
         console.log('Argh! ' + error);
       });
-      })
     }
 
     /* Heart Rate Service */
