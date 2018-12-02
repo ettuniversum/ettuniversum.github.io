@@ -77,7 +77,7 @@ function onButtonClick() {
     characteristicUuid = parseInt(characteristicUuid);
   }
 
-  log('Requesting Bluetooth Device...');
+  console.log('Requesting Bluetooth Device...');
   navigator.bluetooth.requestDevice({filters: [{services: [serviceUuid]}]})
   .then(device => {
     console.log('Connecting to GATT Server...');
