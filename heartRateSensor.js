@@ -8,21 +8,31 @@
       this._characteristics = new Map();
     }
     connect() {
-      return navigator.bluetooth.requestDevice({filters:[{services:[ '00001234-0000-1000-8000-00805f9b34fb' ]}]})
+      serviceUuid = '00001234-0000-1000-8000-00805f9b34fb'
+      characteristicUuid = '00001235-0000-1000-8000-00805f9b34fb'
+
+      console.log('Requesting any Bluetooth Device...');
+      navigator.bluetooth.requestDevice({
+      // filters: [...] <- Prefer filters to save energy & show relevant devices.
+          acceptAllDevices: true,
+          optionalServices: [serviceUuid]})
       .then(device => {
-        this.device = device;
+        console.log('Connecting to GATT Server...');
         return device.gatt.connect();
       })
       .then(server => {
         this.server = server;
-        return Promise.all([
-          server.getPrimaryService('00001234-0000-1000-8000-00805f9b34fb').then(service => {
-            return Promise.all([
-              //this._cacheCharacteristic(service, 'body_sensor_location'),
-              this._cacheCharacteristic(service, '00001235-0000-1000-8000-00805f9b34fb'),
-            ])
-          })
-        ]);
+        console.log('Getting Service...');
+        return server.getPrimaryService(serviceUuid);
+      })
+      .then(service => {
+        console.log('Getting Characteristic...');
+        this._cacheCharacteristic(service, service.getCharacteristic(characteristicUuid))
+        return service.getCharacteristic(characteristicUuid);
+      })
+      .catch(error => {
+        console.log('Argh! ' + error);
+      });
       })
     }
 
