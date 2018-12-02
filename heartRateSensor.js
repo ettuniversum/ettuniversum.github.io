@@ -8,7 +8,7 @@
       this._characteristics = new Map();
     }
     connect() {
-      return navigator.bluetooth.requestDevice({filters:[{services:[ 'heart_rate' ]}]})
+      return navigator.bluetooth.requestDevice({filters:[{services:[ '00001234-0000-1000-8000-00805f9b34fb' ]}]})
       .then(device => {
         this.device = device;
         return device.gatt.connect();
@@ -16,10 +16,10 @@
       .then(server => {
         this.server = server;
         return Promise.all([
-          server.getPrimaryService('heart_rate').then(service => {
+          server.getPrimaryService('00001234-0000-1000-8000-00805f9b34fb').then(service => {
             return Promise.all([
-              this._cacheCharacteristic(service, 'body_sensor_location'),
-              this._cacheCharacteristic(service, 'heart_rate_measurement'),
+              //this._cacheCharacteristic(service, 'body_sensor_location'),
+              this._cacheCharacteristic(service, '00001235-0000-1000-8000-00805f9b34fb'),
             ])
           })
         ]);
@@ -45,10 +45,10 @@
      });
     }
     startNotificationsHeartRateMeasurement() {
-      return this._startNotifications('heart_rate_measurement');
+      return this._startNotifications('00001235-0000-1000-8000-00805f9b34fb');
     }
     stopNotificationsHeartRateMeasurement() {
-      return this._stopNotifications('heart_rate_measurement');
+      return this._stopNotifications('00001235-0000-1000-8000-00805f9b34fb');
     }
     parseHeartRate(value) {
       // In Chrome 50+, a DataView is returned instead of an ArrayBuffer.
@@ -64,24 +64,24 @@
         result.heartRate = value.getUint8(index);
         index += 1;
       }
-      let contactDetected = flags & 0x2;
-      let contactSensorPresent = flags & 0x4;
-      if (contactSensorPresent) {
-        result.contactDetected = !!contactDetected;
-      }
-      let energyPresent = flags & 0x8;
-      if (energyPresent) {
-        result.energyExpended = value.getUint16(index, /*littleEndian=*/true);
-        index += 2;
-      }
-      let rrIntervalPresent = flags & 0x10;
-      if (rrIntervalPresent) {
-        let rrIntervals = [];
-        for (; index + 1 < value.byteLength; index += 2) {
-          rrIntervals.push(value.getUint16(index, /*littleEndian=*/true));
-        }
-        result.rrIntervals = rrIntervals;
-      }
+      //let contactDetected = flags & 0x2;
+      //let contactSensorPresent = flags & 0x4;
+      //if (contactSensorPresent) {
+      //  result.contactDetected = !!contactDetected;
+      //}
+      //let energyPresent = flags & 0x8;
+      //if (energyPresent) {
+      //  result.energyExpended = value.getUint16(index, /*littleEndian=*/true);
+      //  index += 2;
+      //}
+      //let rrIntervalPresent = flags & 0x10;
+      //if (rrIntervalPresent) {
+      //  let rrIntervals = [];
+      //  for (; index + 1 < value.byteLength; index += 2) {
+      //    rrIntervals.push(value.getUint16(index, /*littleEndian=*/true));
+      //  }
+      //  result.rrIntervals = rrIntervals;
+      //}
       return result;
     }
 
