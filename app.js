@@ -67,10 +67,7 @@ function drawWaves() {
 }
 
 function onButtonClick() {
-  let serviceUuid = document.querySelector('#service').value;
-  if (serviceUuid.startsWith('0x')) {
-    serviceUuid = parseInt(serviceUuid);
-  }
+  serviceUuid = '00001234-0000-1000-8000-00805f9b34fb'
 
   let characteristicUuid = document.querySelector('#characteristic').value;
   if (characteristicUuid.startsWith('0x')) {
