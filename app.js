@@ -68,14 +68,13 @@ function drawWaves() {
 
 function onButtonClick() {
   serviceUuid = '00001234-0000-1000-8000-00805f9b34fb'
+  characteristicUuid = '00001235-0000-1000-8000-00805f9b34fb'
 
-  let characteristicUuid = document.querySelector('#characteristic').value;
-  if (characteristicUuid.startsWith('0x')) {
-    characteristicUuid = parseInt(characteristicUuid);
-  }
-
-  console.log('Requesting Bluetooth Device...');
-  navigator.bluetooth.requestDevice({filters: [{services: [serviceUuid]}]})
+  console.log('Requesting any Bluetooth Device...');
+  navigator.bluetooth.requestDevice({
+  // filters: [...] <- Prefer filters to save energy & show relevant devices.
+      acceptAllDevices: true,
+      optionalServices: [serviceUuid]})
   .then(device => {
     console.log('Connecting to GATT Server...');
     return device.gatt.connect();
@@ -85,17 +84,16 @@ function onButtonClick() {
     return server.getPrimaryService(serviceUuid);
   })
   .then(service => {
-    console.log('Getting Characteristics...');
-    if (characteristicUuid) {
-      // Get all characteristics that match this UUID.
-      return service.getCharacteristics(characteristicUuid);
-    }
-    // Get all characteristics.
-    return service.getCharacteristics();
+    console.log('Getting Characteristic...');
+    return service.getCharacteristic(characteristicUuid);
   })
-  .then(characteristics => {
-    console.log('> Characteristics: ' +
-      characteristics.map(c => c.uuid).join('\n' + ' '.repeat(19)));
+  .then(characteristic => {
+    console.log('Reading Battery Level...');
+    return characteristic.readValue();
+  })
+  .then(value => {
+    let batteryLevel = value.getUint8(0);
+    console.log('> Characteristic is ' + batteryLevel);
   })
   .catch(error => {
     console.log('Argh! ' + error);
