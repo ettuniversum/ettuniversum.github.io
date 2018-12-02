@@ -67,22 +67,42 @@ function drawWaves() {
 }
 
 function onButtonClick() {
-  navigator.bluetooth.requestDevice({ filters: [{ services: ['00001801-0000-1000-8000-00805f9b34fb'] }] })
-  .then(device => device.gatt.connect())
-  .then(server => server.getPrimaryService('00001801-0000-1000-8000-00805f9b34fb'))
-  .then(service => service.getCharacteristic('00002a05-0000-1000-8000-00805f9b34fb'))
-  .then(characteristic => characteristic.startNotifications())
-  .then(characteristic => {
-    characteristic.addEventListener('characteristicvaluechanged',
-                                    handleCharacteristicValueChanged);
-    console.log(' > Notifications have been started.');
-  .then(characteristic => characteristic.getDescriptor('00002902-0000-1000-8000-00805f9b34fb'))
-  .then(descriptor => descriptor.readValue())
-  .then(value => {
-  let decoder = new TextDecoder('utf-8');
-  console.log('Value : ' + decoder.decode(value));
+  let serviceUuid = document.querySelector('#service').value;
+  if (serviceUuid.startsWith('0x')) {
+    serviceUuid = parseInt(serviceUuid);
+  }
+
+  let characteristicUuid = document.querySelector('#characteristic').value;
+  if (characteristicUuid.startsWith('0x')) {
+    characteristicUuid = parseInt(characteristicUuid);
+  }
+
+  log('Requesting Bluetooth Device...');
+  navigator.bluetooth.requestDevice({filters: [{services: [serviceUuid]}]})
+  .then(device => {
+    console.log('Connecting to GATT Server...');
+    return device.gatt.connect();
   })
-  .catch(error => { console.log(error); });  
+  .then(server => {
+    console.log('Getting Service...');
+    return server.getPrimaryService(serviceUuid);
+  })
+  .then(service => {
+    console.log('Getting Characteristics...');
+    if (characteristicUuid) {
+      // Get all characteristics that match this UUID.
+      return service.getCharacteristics(characteristicUuid);
+    }
+    // Get all characteristics.
+    return service.getCharacteristics();
+  })
+  .then(characteristics => {
+    console.log('> Characteristics: ' +
+      characteristics.map(c => c.uuid).join('\n' + ' '.repeat(19)));
+  })
+  .catch(error => {
+    console.log('Argh! ' + error);
+  });
 }
 /* Utils */
 
