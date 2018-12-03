@@ -8,8 +8,8 @@
       this._characteristics = new Map();
     }
     connect() {
-      serviceUuid = '00001234-0000-1000-8000-00805f9b34fb'
-      characteristicUuid = '00001235-0000-1000-8000-00805f9b34fb'
+      var serviceUuid = '00001234-0000-1000-8000-00805f9b34fb'
+      var characteristicUuid = '00001235-0000-1000-8000-00805f9b34fb'
 
       console.log('Requesting any Bluetooth Device...');
       navigator.bluetooth.requestDevice({
