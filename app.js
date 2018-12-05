@@ -9,7 +9,6 @@ statusText.addEventListener('click', function() {
   .catch(error => {
     statusText.textContent = error;
   });
-  onButtonClick();
 });
 
 function handleHeartRateMeasurement(heartRateMeasurement) {
