@@ -27,7 +27,7 @@
       })
       .then(service => {
         console.log('Getting Characteristic...');
-        this._cacheCharacteristic(service, service.getCharacteristic(characteristicUuid))
+        this._cacheCharacteristic(service, characteristicUuid)
         return service.getCharacteristic(characteristicUuid);
       })
       .catch(error => {
