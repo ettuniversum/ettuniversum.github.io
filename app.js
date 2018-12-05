@@ -4,11 +4,12 @@ var statusText = document.querySelector('#statusText');
 statusText.addEventListener('click', function() {
   statusText.textContent = 'Breathe...';
   heartRates = [];
-  heartRateSensor.connect()
-  .then(() => heartRateSensor.startNotificationsHeartRateMeasurement().then(handleHeartRateMeasurement))
-  .catch(error => {
-    statusText.textContent = error;
-  });
+  // heartRateSensor.connect()
+  // .then(() => heartRateSensor.startNotificationsHeartRateMeasurement().then(handleHeartRateMeasurement))
+  // .catch(error => {
+  //   statusText.textContent = error;
+  // });
+  onButtonClick();
 });
 
 function handleHeartRateMeasurement(heartRateMeasurement) {
@@ -88,6 +89,11 @@ function onButtonClick() {
   })
   .then(characteristic => {
     console.log('Reading Battery Level...');
+    var buffer = new ArrayBuffer(1);
+    buffer = [characteristic.readValue()];
+    var view   = new Int32Array(buffer);
+    value = heartRateSensor.parseHeartRate(view);
+    console.log(value);
     return characteristic.readValue();
   })
   .then(value => {
