@@ -88,17 +88,14 @@ function onButtonClick() {
     return service.getCharacteristic(characteristicUuid);
   })
   .then(characteristic => {
-    console.log('Reading Battery Level...');
+    console.log('Reading HR Beat...');
+    value = characteristic.readValue();
+    let hr_beat = value.getUint8(0);
     var buffer = new ArrayBuffer(1);
-    buffer = [characteristic.readValue()];
+    buffer = [hr_beat];
     var view   = new Int32Array(buffer);
     value = heartRateSensor.parseHeartRate(view);
     console.log(value);
-    return characteristic.readValue();
-  })
-  .then(value => {
-    let batteryLevel = value.getUint8(0);
-    console.log('> Characteristic is ' + batteryLevel);
   })
   .catch(error => {
     console.log('Argh! ' + error);
