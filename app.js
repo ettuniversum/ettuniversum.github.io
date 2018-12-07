@@ -89,6 +89,7 @@ function onButtonClick() {
   })
   .then(characteristic => {
     console.log('Reading HR Beat...');
+    characteristic.readValue()
     let hr_beat = characteristic.value.getInt8();
 //     var buffer = new ArrayBuffer(1);
 //     buffer = [hr_beat];
