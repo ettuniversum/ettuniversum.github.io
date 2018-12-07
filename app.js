@@ -89,16 +89,12 @@ function onButtonClick() {
   })
   .then(characteristic => {
     console.log('Reading HR Beat...');
-    characteristic.readValue()
-    let hr_beat = characteristic.value.getInt8();
-//     var buffer = new ArrayBuffer(1);
-//     buffer = [hr_beat];
-//     var view   = new Int32Array(buffer);
-//     value = heartRateSensor.parseHeartRate(view);
-    console.log(hr_beat);
-    heartRates.push(hr_beat);
-    statusText.innerHTML = heartRateMeasurement.heartRate + ' &#x2764;';
-    drawWaves();
+    characteristic.readValue().then(function(hr_beat){
+      console.log(hr_beat.getInt8());
+      heartRates.push(hr_beat);
+      statusText.innerHTML = hr_beat + ' &#x2764;';
+      drawWaves();
+    });
   })
   .catch(error => {
     console.log('Argh! ' + error);
