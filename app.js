@@ -89,12 +89,11 @@ function onButtonClick() {
   })
   .then(characteristic => {
     console.log('Reading HR Beat...');
-    characteristic.readValue().then(handleHeartRateMeasurement());
-    // characteristic.readValue().then(function(hr_beat){
-    //   console.log(hr_beat.getInt8());
-    //   heartRates.push(hr_beat);
-    //   statusText.innerHTML = hr_beat.getInt8() + ' &#x2764;';
-    //   drawWaves();
+    characteristic.readValue().then(function(hr_beat){
+      console.log(hr_beat.getInt8());
+      heartRates.push(hr_beat);
+      statusText.innerHTML = hr_beat.getInt8() + ' &#x2764;';
+      drawWaves();
     });
   })
   .catch(error => {
