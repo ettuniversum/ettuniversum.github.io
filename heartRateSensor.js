@@ -1,39 +1,64 @@
 (function() {
   'use strict';
 
-  class HeartRateSensor {
-    constructor() {
-      this.device = null;
-      this.server = null;
-      this._characteristics = new Map();
-    }
-    connect() {
-      var serviceUuid = '00001234-0000-1000-8000-00805f9b34fb'
-      var characteristicUuid = '00001235-0000-1000-8000-00805f9b34fb'
+  // class HeartRateSensor {
+  //   constructor() {
+  //     this.device = null;
+  //     this.server = null;
+  //     this._characteristics = new Map();
+  //   }
+  //   connect() {
+  //     var serviceUuid = '00001234-0000-1000-8000-00805f9b34fb'
+  //     var characteristicUuid = '00001235-0000-1000-8000-00805f9b34fb'
+  //
+  //     console.log('Requesting any Bluetooth Device...');
+  //     navigator.bluetooth.requestDevice({
+  //     // filters: [...] <- Prefer filters to save energy & show relevant devices.
+  //         acceptAllDevices: true,
+  //         optionalServices: [serviceUuid]})
+  //     .then(device => {
+  //       console.log('Connecting to GATT Server...');
+  //       return device.gatt.connect();
+  //     })
+  //     .then(server => {
+  //       this.server = server;
+  //       console.log('Getting Service...');
+  //       return server.getPrimaryService(serviceUuid);
+  //     })
+  //     .then(service => {
+  //       console.log('Getting Characteristic...');
+  //       this._cacheCharacteristic(service, characteristicUuid)
+  //       return service.getCharacteristic(characteristicUuid);
+  //     })
+  //     .catch(error => {
+  //       console.log('Argh! ' + error);
+  //     });
+  //   }
 
-      console.log('Requesting any Bluetooth Device...');
-      navigator.bluetooth.requestDevice({
-      // filters: [...] <- Prefer filters to save energy & show relevant devices.
-          acceptAllDevices: true,
-          optionalServices: [serviceUuid]})
-      .then(device => {
-        console.log('Connecting to GATT Server...');
-        return device.gatt.connect();
-      })
-      .then(server => {
-        this.server = server;
-        console.log('Getting Service...');
-        return server.getPrimaryService(serviceUuid);
-      })
-      .then(service => {
-        console.log('Getting Characteristic...');
-        this._cacheCharacteristic(service, characteristicUuid)
-        return service.getCharacteristic(characteristicUuid);
-      })
-      .catch(error => {
-        console.log('Argh! ' + error);
-      });
-    }
+  class HeartRateSensor {
+  constructor() {
+    this.device = null;
+    this.server = null;
+    this._characteristics = new Map();
+  }
+  connect() {
+    return navigator.bluetooth.requestDevice({filters:[{services:[ 'heart_rate' ]}]})
+    .then(device => {
+      this.device = device;
+      return device.gatt.connect();
+    })
+    .then(server => {
+      this.server = server;
+      return Promise.all([
+        server.getPrimaryService('heart_rate').then(service => {
+          return Promise.all([
+            //this._cacheCharacteristic(service, 'body_sensor_location'),
+            this._cacheCharacteristic(service, 'heart_rate_measurement'),
+          ])
+        })
+      ]);
+    })
+  }
 
     /* Heart Rate Service */
 
@@ -54,10 +79,10 @@
      });
     }
     startNotificationsHeartRateMeasurement() {
-      return this._startNotifications('00001235-0000-1000-8000-00805f9b34fb');
+      return this._startNotifications('heart_rate_measurement');
     }
     stopNotificationsHeartRateMeasurement() {
-      return this._stopNotifications('00001235-0000-1000-8000-00805f9b34fb');
+      return this._stopNotifications('heart_rate_measurement');
     }
     parseHeartRate(value) {
       // In Chrome 50+, a DataView is returned instead of an ArrayBuffer.
