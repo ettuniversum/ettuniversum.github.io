@@ -9,7 +9,6 @@ statusText.addEventListener('click', function() {
   .catch(error => {
     statusText.textContent = error;
   });
-  onButtonClick();
 });
 
 function handleHeartRateMeasurement(heartRateMeasurement) {
@@ -64,79 +63,6 @@ function drawWaves() {
       }
     }
   });
-}
-
-function onButtonClick() {
-  serviceUuid = '00001234-0000-1000-8000-00805f9b34fb'
-  characteristicUuid = '00001235-0000-1000-8000-00805f9b34fb'
-
-  console.log('Requesting any Bluetooth Device...');
-  navigator.bluetooth.requestDevice({
-  // filters: [...] <- Prefer filters to save energy & show relevant devices.
-      acceptAllDevices: true,
-      optionalServices: [serviceUuid]})
-  .then(device => {
-    console.log('Connecting to GATT Server...');
-    return device.gatt.connect();
-  })
-  .then(server => {
-    console.log('Getting Service...');
-    return server.getPrimaryService(serviceUuid);
-  })
-  .then(service => {
-    console.log('Getting Characteristic...');
-    return service.getCharacteristic(characteristicUuid);
-  })
-  .then(characteristic => {
-    console.log('Reading HR Beat...');
-    characteristic.readValue().then(function(hr_beat){
-      console.log(hr_beat.getInt8());
-      heartRates.push(hr_beat);
-      statusText.innerHTML = hr_beat.getInt8() + ' &#x2764;';
-      drawWaves();
-    });
-  })
-  .catch(error => {
-    console.log('Argh! ' + error);
-  });
-}
-/* Utils */
-
-function padHex(value) {
-  return ('00' + value.toString(16).toUpperCase()).slice(-2);
-}
-
-function getUsbVendorName(value) {
-  // Check out page source to see what valueToUsbVendorName object is.
-  return value +
-      (value in valueToUsbVendorName ? ' (' + valueToUsbVendorName[value] + ')' : '');
-}
-
-function handleCharacteristicValueChanged(event) {
-  let value = event.target.value;
-  let a = [];
-  console.log('Received value: ' + value);
-  // Convert raw data bytes to hex values just for the sake of showing something.
-  // In the "real" world, you'd use data.getUint8, data.getUint16 or even
-  // TextDecoder to process raw data bytes.
-  for (let i = 0; i < value.byteLength; i++) {
-    a.push('0x' + ('00' + value.getUint8(i).toString(16)).slice(-2));
-  }
-  console.log('> ' + a.join(' '));
-}
-
-/* Utils */
-
-const valueToReportType = {
-  1: 'Input Report',
-  2: 'Output Report',
-  3: 'Feature Report'
-};
-
-function getReportType(value) {
-  let v = value.getUint8(1);
-  return v + (v in valueToReportType ?
-      ' (' + valueToReportType[v] + ')' : 'Unknown');
 }
 
 window.onresize = drawWaves;
