@@ -4,11 +4,11 @@ var statusText = document.querySelector('#statusText');
 statusText.addEventListener('click', function() {
   statusText.textContent = 'Breathe...';
   heartRates = [];
-  // heartRateSensor.connect()
-  // .then(() => heartRateSensor.startNotificationsHeartRateMeasurement().then(handleHeartRateMeasurement))
-  // .catch(error => {
-  //   statusText.textContent = error;
-  // });
+  heartRateSensor.connect()
+  .then(() => heartRateSensor.startNotificationsHeartRateMeasurement().then(handleHeartRateMeasurement))
+  .catch(error => {
+    statusText.textContent = error;
+  });
   onButtonClick();
 });
 
