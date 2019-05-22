@@ -8,7 +8,7 @@
       this._characteristics = new Map();
     }
     connect() {
-      return navigator.bluetooth.requestDevice({filters:[{services:[ '6E400001-B5A3-F393-E0A9-E50E24DCCA9E' ]}]})
+      return navigator.bluetooth.requestDevice({filters:[{services:[ '00001801-0000-1000-8000-00805f9b34fb' ]}]})
       .then(device => {
         this.device = device;
         return device.gatt.connect();
@@ -16,10 +16,9 @@
       .then(server => {
         this.server = server;
         return Promise.all([
-          server.getPrimaryService('6E400001-B5A3-F393-E0A9-E50E24DCCA9E').then(service => {
+          server.getPrimaryService('00001801-0000-1000-8000-00805f9b34fb').then(service => {
             return Promise.all([
-              this._cacheCharacteristic(service, 'body_sensor_location'),
-              this._cacheCharacteristic(service, '6E400003-B5A3-F393-E0A9-E50E24DCCA9E'),
+              this._cacheCharacteristic(service, '00002a05-0000-1000-8000-00805f9b34fb'),
             ])
           })
         ]);
@@ -45,10 +44,10 @@
      });
     }
     startNotificationsHeartRateMeasurement() {
-      return this._startNotifications('6E400003-B5A3-F393-E0A9-E50E24DCCA9E');
+      return this._startNotifications('00002a05-0000-1000-8000-00805f9b34fb');
     }
     stopNotificationsHeartRateMeasurement() {
-      return this._stopNotifications('6E400003-B5A3-F393-E0A9-E50E24DCCA9E');
+      return this._stopNotifications('00002a05-0000-1000-8000-00805f9b34fb');
     }
     parseHeartRate(value) {
       // In Chrome 50+, a DataView is returned instead of an ArrayBuffer.
