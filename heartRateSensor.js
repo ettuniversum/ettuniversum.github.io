@@ -8,7 +8,7 @@
       this._characteristics = new Map();
     }
     connect() {
-      return navigator.bluetooth.requestDevice({filters:[{services:[ '00001801-0000-1000-8000-00805f9b34fb' ]}]})
+      return navigator.bluetooth.requestDevice({filters:[{services:[ '0000180D-0000-1000-8000-00805F9b34FB' ]}]})
       .then(device => {
         this.device = device;
         return device.gatt.connect();
@@ -16,9 +16,9 @@
       .then(server => {
         this.server = server;
         return Promise.all([
-          server.getPrimaryService('00001801-0000-1000-8000-00805f9b34fb').then(service => {
+          server.getPrimaryService('0000180D-0000-1000-8000-00805F9b34FB').then(service => {
             return Promise.all([
-              this._cacheCharacteristic(service, '00002a05-0000-1000-8000-00805f9b34fb'),
+              this._cacheCharacteristic(service, '00002A37-0000-1000-8000-00805F9b34FB'),
             ])
           })
         ]);
@@ -44,10 +44,10 @@
      });
     }
     startNotificationsHeartRateMeasurement() {
-      return this._startNotifications('00002a05-0000-1000-8000-00805f9b34fb');
+      return this._startNotifications('00002A37-0000-1000-8000-00805F9b34FB');
     }
     stopNotificationsHeartRateMeasurement() {
-      return this._stopNotifications('00002a05-0000-1000-8000-00805f9b34fb');
+      return this._stopNotifications('00002A37-0000-1000-8000-00805F9b34FB');
     }
     parseHeartRate(value) {
       // In Chrome 50+, a DataView is returned instead of an ArrayBuffer.
