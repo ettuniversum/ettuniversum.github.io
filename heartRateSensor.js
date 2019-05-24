@@ -60,18 +60,18 @@
           var hexadecimal = firstByte + ('00' + rb[i+1].toString(16)).slice(-2);
       }
       BPM = parseInt(hexadecimal, 16)
-      // BPM = BPM.buffer ? BPM : new DataView(BPM);
-      // let flags = BPM.getUint8(0);
-      // let rate16Bits = flags & 0x1;
-      // let result = {};
-      // let index = 1;
-      // if (rate16Bits) {
-      //   result.heartRate = BPM.getUint16(index, /*littleEndian=*/true);
-      //   index += 2;
-      // } else {
-      //   result.heartRate = BPM.getUint8(index);
-      //   index += 1;
-      // }
+      BPM = BPM.buffer ? BPM : new DataView(BPM);
+      let flags = BPM.getUint8(0);
+      let rate16Bits = flags & 0x1;
+      let result = {};
+      let index = 1;
+      if (rate16Bits) {
+        result.heartRate = BPM.getUint16(index, /*littleEndian=*/true);
+        index += 2;
+      } else {
+        result.heartRate = BPM.getUint8(index);
+        index += 1;
+      }
       return BPM;
     }
 
