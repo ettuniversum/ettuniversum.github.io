@@ -8,7 +8,7 @@
       this._characteristics = new Map();
     }
     connect() {
-      return navigator.bluetooth.requestDevice(acceptAllDevices: true,
+      return navigator.bluetooth.requestDevice({acceptAllDevices: true,
                                                 optionalServices: ['generic_access']})
       .then(device => {
         this.device = device;
