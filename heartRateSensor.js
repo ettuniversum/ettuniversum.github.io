@@ -52,7 +52,7 @@
     }
     parseHeartRate(value) {
       // In Chrome 50+, a DataView is returned instead of an ArrayBuffer.
-      value = value.buffer ? value : new DataView(value);
+      value = value.buffer ? value : new DataView(value.toString(16));
       let flags = value.getUint8(0);
       let rate16Bits = flags & 0x1;
       let result = {};
@@ -86,6 +86,15 @@
     }
 
     /* Utils */
+    _hextobin(hex_value){
+      bytes = [],
+      str;
+      for(var i=0; i< hex.length-1; i+=2){
+         bytes.push(parseInt(hex.substr(i, 2), 16));
+      }
+      str = String.fromCharCode.apply(String, bytes);
+      return str
+    }
 
     _cacheCharacteristic(service, characteristicUuid) {
       return service.getCharacteristic(characteristicUuid)
