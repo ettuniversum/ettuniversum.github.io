@@ -8,7 +8,7 @@
       this._characteristics = new Map();
     }
     connect() {
-      return navigator.bluetooth.requestDevice({filters:[{services:[ '0000180D-0000-1000-8000-00805F9b34FB' ]}]})
+      return navigator.bluetooth.requestDevice({filters:[{services:[ 'heart_rate' ]}]})
       .then(device => {
         this.device = device;
         return device.gatt.connect();
@@ -16,9 +16,9 @@
       .then(server => {
         this.server = server;
         return Promise.all([
-          server.getPrimaryService('0000180D-0000-1000-8000-00805F9b34FB').then(service => {
+          server.getPrimaryService('heart_rate').then(service => {
             return Promise.all([
-              this._cacheCharacteristic(service, '00002A37-0000-1000-8000-00805F9b34FB'),
+              this._cacheCharacteristic(service, 'heart_rate_measurement'),
             ])
           })
         ]);
@@ -44,10 +44,10 @@
      });
     }
     startNotificationsHeartRateMeasurement() {
-      return this._startNotifications('00002A37-0000-1000-8000-00805F9b34FB');
+      return this._startNotifications('heart_rate_measurement');
     }
     stopNotificationsHeartRateMeasurement() {
-      return this._stopNotifications('00002A37-0000-1000-8000-00805F9b34FB');
+      return this._stopNotifications('heart_rate_measurement');
     }
     parseHeartRate(value) {
       // In Chrome 50+, a DataView is returned instead of an ArrayBuffer.
