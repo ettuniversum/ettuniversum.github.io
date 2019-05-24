@@ -52,37 +52,27 @@
     }
     parseHeartRate(value) {
       // In Chrome 50+, a DataView is returned instead of an ArrayBuffer.
-      value = value.buffer ? value : new DataView(value.toString(16));
-      let flags = value.getUint8(0);
-      let rate16Bits = flags & 0x1;
-      let result = {};
-      let index = 1;
-      if (rate16Bits) {
-        result.heartRate = value.getUint16(index, /*littleEndian=*/true);
-        index += 2;
-      } else {
-        result.heartRate = value.getUint8(index);
-        index += 1;
+      var rb = new Uint8Array(value);
+      var signal = 0
+      var BPM = 0
+      for (var i=0; i<rb.length; i+=2) {
+          var firstByte = ('00' + rb[i].toString(16)).slice(-2);
+          var hexadecimal = firstByte + ('00' + rb[i+1].toString(16)).slice(-2);
       }
-      // let contactDetected = flags & 0x2;
-      // let contactSensorPresent = flags & 0x4;
-      // if (contactSensorPresent) {
-      //   result.contactDetected = !!contactDetected;
-      // }
-      // let energyPresent = flags & 0x8;
-      // if (energyPresent) {
-      //   result.energyExpended = value.getUint16(index, /*littleEndian=*/true);
+      BPM = parseInt(hexadecimal, 16)
+      // BPM = BPM.buffer ? BPM : new DataView(BPM);
+      // let flags = BPM.getUint8(0);
+      // let rate16Bits = flags & 0x1;
+      // let result = {};
+      // let index = 1;
+      // if (rate16Bits) {
+      //   result.heartRate = BPM.getUint16(index, /*littleEndian=*/true);
       //   index += 2;
+      // } else {
+      //   result.heartRate = BPM.getUint8(index);
+      //   index += 1;
       // }
-      // let rrIntervalPresent = flags & 0x10;
-      // if (rrIntervalPresent) {
-      //   let rrIntervals = [];
-      //   for (; index + 1 < value.byteLength; index += 2) {
-      //     rrIntervals.push(value.getUint16(index, /*littleEndian=*/true));
-      //   }
-      //   result.rrIntervals = rrIntervals;
-      // }
-      return result;
+      return BPM;
     }
 
     /* Utils */
