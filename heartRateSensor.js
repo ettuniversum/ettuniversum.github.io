@@ -55,7 +55,7 @@
       let result = {};
       let bit_array = [];
       bit_array.unshift(value);
-      if bit_array.size() == 2 {
+      if (bit_array.length == 2) {
          low_bit = bit_array[0].getInt8();
          high_bit = bit_array[1].getInt8();
          result.heartRate = (((high_bit & 0xff) << 8) | (low_bit & 0xff));
