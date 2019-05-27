@@ -9,7 +9,7 @@
     }
     connect() {
       return navigator.bluetooth.requestDevice({acceptAllDevices: true,
-                                                optionalServices: ['generic_access']})
+                                                optionalServices: ['heart_rate']})
       .then(device => {
         this.device = device;
         return device.gatt.connect();
@@ -53,7 +53,13 @@
     parseHeartRate(value) {
       // In Chrome 50+, a DataView is returned instead of an ArrayBuffer.
       let result = {};
-      result.heartRate = value.getInt8()
+      let bit_array = [];
+      bit_array.unshift(value);
+      if bit_array.size() == 2 {
+         low_bit = bit_array[0].getInt8();
+         high_bit = bit_array[1].getInt8();
+         result.heartRate = (((high_bit & 0xff) << 8) | (low_bit & 0xff));
+      }
       return result;
     }
 
