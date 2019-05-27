@@ -57,8 +57,8 @@
       let result = {};
       this.bit_array.unshift(value.getUint8());
       if (this.bit_array.length == 2) {
-         low_bit = this.bit_array[0]; // Obtain first 8 bits
-         high_bit = this.bit_array[1]; // Obtain second 8 bits
+         var low_bit = this.bit_array[0]; // Obtain first 8 bits
+         var high_bit = this.bit_array[1]; // Obtain second 8 bits
          result.heartRate = (((high_bit & 0xff) << 8) | (low_bit & 0xff));
          this.bit_array = []; // Clear for the next BPM
       }
