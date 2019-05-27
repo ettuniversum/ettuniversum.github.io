@@ -15,8 +15,8 @@ function handleHeartRateMeasurement(heartRateMeasurement) {
   heartRateMeasurement.addEventListener('characteristicvaluechanged', event => {
     var heartRateMeasurement = heartRateSensor.parseHeartRate(event.target.value);
     statusText.innerHTML = heartRateMeasurement.heartRate + ' &#x2764;';
-    heartRates.push(heartRateMeasurement.heartRate);
-    drawWaves();
+    //heartRates.push(heartRateMeasurement.heartRate);
+    //drawWaves();
   });
 }
 
@@ -25,7 +25,7 @@ var mode = 'bar';
 
 canvas.addEventListener('click', event => {
   mode = mode === 'bar' ? 'line' : 'bar';
-  drawWaves();
+  //drawWaves();
 });
 
 function drawWaves() {
@@ -69,6 +69,6 @@ window.onresize = drawWaves;
 
 document.addEventListener("visibilitychange", () => {
   if (!document.hidden) {
-    drawWaves();
+    //drawWaves();
   }
 });
