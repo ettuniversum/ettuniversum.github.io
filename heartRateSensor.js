@@ -6,6 +6,8 @@
       this.device = null;
       this.server = null;
       this._characteristics = new Map();
+      let bit_array = [];
+      this.bit_array = bit_array;
     }
     connect() {
       return navigator.bluetooth.requestDevice({acceptAllDevices: true,
@@ -53,12 +55,12 @@
     parseHeartRate(value) {
       // In Chrome 50+, a DataView is returned instead of an ArrayBuffer.
       let result = {};
-      let bit_array = [];
-      bit_array.unshift(value);
-      if (bit_array.length == 2) {
-         low_bit = bit_array[0].getInt8();
-         high_bit = bit_array[1].getInt8();
+      this.bit_array.unshift(value);
+      if (this.bit_array.length == 2) {
+         low_bit = this.bit_array[0].getInt8(); // Obtain first 8 bits
+         high_bit = this.bit_array[1].getInt8(); // Obtain second 8 bits
          result.heartRate = (((high_bit & 0xff) << 8) | (low_bit & 0xff));
+         this.bit_array = []; // Clear for the next BPM
       }
       return result;
     }
