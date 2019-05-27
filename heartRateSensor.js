@@ -60,14 +60,7 @@
         console.log("Unsigned 8-bit.");
         result.heartRate = value.getUint8();
       } catch (ex){
-        console.log("Unsigned 8-bit.");
-        console.log(ex);
-      }
-      try {
-        console.log("Unsigned 16-bit.");
-        result.heartRate = value.getUint16();
-      } catch (ex){
-        console.log("Unsigned 16-bit.");
+        console.log("Error Unsigned 8-bit.");
         console.log(ex);
       }
       return result;
