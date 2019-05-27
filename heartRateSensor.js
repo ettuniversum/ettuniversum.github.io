@@ -55,12 +55,12 @@
     parseHeartRate(value) {
       // In Chrome 50+, a DataView is returned instead of an ArrayBuffer.
       let result = {};
-      this.bit_array.unshift(value.getUint8());
-      if (this.bit_array.length == 2) {
-         var low_bit = this.bit_array[0]; // Obtain first 8 bits
-         var high_bit = this.bit_array[1]; // Obtain second 8 bits
-         result.heartRate = (((high_bit & 0xff) << 8) | (low_bit & 0xff));
-         this.bit_array = []; // Clear for the next BPM
+      try {
+        console.log("Unsigned 8-bit.");
+        result.heartRate = value.getUint8();
+      } catch (ex){
+        console.log("Unsigned 16-bit.");
+        result.heartRate = value.getUint16();
       }
       return result;
     }
