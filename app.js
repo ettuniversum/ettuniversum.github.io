@@ -14,8 +14,8 @@ statusText.addEventListener('click', function() {
 function handleHeartRateMeasurement(heartRateMeasurement) {
   heartRateMeasurement.addEventListener('characteristicvaluechanged', event => {
     var heartRateMeasurement = heartRateSensor.parseHeartRate(event.target.value);
-    var o = heartRateMeasurement.heartRate + ' &#x2764;' + heartRateMeasurement.index;
-    statusText.innerHTML = o;
+    var outputHtml = heartRateMeasurement.heartRate + ' &#x2764;';
+    statusText.innerHTML = outputHtml;
     //heartRates.push(heartRateMeasurement.heartRate);
     //drawWaves();
   });
