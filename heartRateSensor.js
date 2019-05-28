@@ -1,3 +1,5 @@
+var gindex=0;
+
 (function() {
   'use strict';
 
@@ -56,6 +58,8 @@
       // In Chrome 50+, a DataView is returned instead of an ArrayBuffer.
       let result = {};
       result.heartRate = value.getUint8();
+      gindex = gindex + 1;
+      result.index = gindex;
       return result;
     }
 
