@@ -8,7 +8,6 @@
       this._characteristics = new Map();
       let bit_array = [];
       this.bit_array = bit_array;
-      this.index = 0;
     }
     connect() {
       return navigator.bluetooth.requestDevice({acceptAllDevices: true,
@@ -57,8 +56,6 @@
       // In Chrome 50+, a DataView is returned instead of an ArrayBuffer.
       let result = {};
       result.heartRate = value.getUint8();
-      this.index = this.index+1;
-      result.index = this.index;
       return result;
     }
 
