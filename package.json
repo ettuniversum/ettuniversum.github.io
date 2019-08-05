@@ -1,7 +1,10 @@
 {
-  "name": "ettuniversum.github.io",
+  "name": "@ettuniversum/ettuniversum.github.io",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ettuniversum/ettuniversum.github.io.git"
+  },
   "version": "1.0.0",
-  "description": "",
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -11,5 +14,11 @@
   "dependencies": {
     "azure-iot-device": "^1.10.0",
     "azure-iot-device-mqtt": "^1.10.0"
-  }
+  },
+  "bugs": {
+    "url": "https://github.com/ettuniversum/ettuniversum.github.io/issues"
+  },
+  "homepage": "https://github.com/ettuniversum/ettuniversum.github.io#readme",
+  "devDependencies": {},
+  "description": ""
 }
