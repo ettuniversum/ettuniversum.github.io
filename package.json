@@ -13,7 +13,9 @@
   "license": "ISC",
   "dependencies": {
     "azure-iot-device": "^1.10.0",
-    "azure-iot-device-mqtt": "^1.10.0"
+    "azure-iot-device-mqtt": "^1.10.0",
+    "np": "^5.0.3",
+    "npm-upgrade": "^2.0.0"
   },
   "bugs": {
     "url": "https://github.com/ettuniversum/ettuniversum.github.io/issues"
