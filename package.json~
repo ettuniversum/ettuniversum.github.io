@@ -2,7 +2,7 @@
   "name": "@ettuniversum/ettuniversum.github.io",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ettuniversum/ettuniversum.github.io.git"
+    "url": "git+https://github.com/ettuniversum/ettuniversum.github.io.git"
   },
   "version": "1.0.0",
   "main": "app.js",
