@@ -1,13 +1,6 @@
 var canvas = document.querySelector('canvas');
 var statusText = document.querySelector('#statusText');
-// Connection info for Microsoft Azure IOT
-var clientFromConnectionString = require('azure-iot-device-mqtt').clientFromConnectionString;
-var Message = require('azure-iot-device').Message;
-var ConnectionString = require('azure-iot-device').ConnectionString;
-// Connection string specific to Wearout HR monitor
-var connectionString = 'HostName=iotc-76370f29-7e6f-424d-a7c1-cd7a42b16c64.azure-devices.net;DeviceId=05292775-e359-4894-9dd1-d2b923e81f02;SharedAccessKey=YTFNY1rnGYHTl7vqLGTZZ9/XYenUgwDdfmpI93hIjOU=';
-var heartRate = 0;
-var client = clientFromConnectionString(connectionString);
+
 
 
 statusText.addEventListener('click', function() {
@@ -19,9 +12,6 @@ statusText.addEventListener('click', function() {
   .catch(error => {
     statusText.textContent = error;
   });
-  // Connect to Microsoft Azure IOT
-  // Send random values
-  client.open(connectCallback);
 });
 
 function handleHeartRateMeasurement(heartRateMeasurement) {
@@ -31,29 +21,6 @@ function handleHeartRateMeasurement(heartRateMeasurement) {
     var outputHtml = heartRateMeasurement.heartRate + ' &#x2764;';
     statusText.innerHTML = outputHtml;
   });
-}
-
-// Handle device connection to Azure IoT Central.
-var connectCallback = (err) => {
-  if (err) {
-    console.log(`Device could not connect to Azure IoT Central: ${err.toString()}`);
-  } else {
-    console.log('Device successfully connected to Azure IoT Central');
-    // Send telemetry measurements to Azure IoT Central every 1 second.
-    setInterval(sendTelemetryHR, 1000);
-    // Setup device command callbacks
-    //client.onDeviceMethod('echo', onCommandEcho);
-  }
-};
-
-// Send device telemetry.
-function sendTelemetryHR() {
-  var heartRateMeasurement = (Math.random() * 15);
-  var data = JSON.stringify({ BPM: heartRateMeasurement });
-  var message = new Message(data);
-  client.sendEvent(message, (err, res) => console.log(`Sent message: ${message.getData()}` +
-    (err ? `; error: ${err.toString()}` : '') +
-    (res ? `; status: ${res.constructor.name}` : '')));
 }
 
 var heartRates = [];
